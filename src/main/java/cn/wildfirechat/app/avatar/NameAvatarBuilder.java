@@ -35,23 +35,43 @@ public class NameAvatarBuilder {
         // Get the FontMetrics
         // 加载自定义字体
         if (font == null) {
-            try (InputStream inputStream = new ClassPathResource("fonts/simhei.ttf").getInputStream()) {
-                // 加载自定义字体
-                Font customFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-                // 设置字体样式
-                font = customFont.deriveFont(Font.PLAIN, 40);
-            } catch (IOException | FontFormatException e) {
-                e.printStackTrace();
+            synchronized (NameAvatarBuilder.class) {
+                if (font == null) {
+                    Font loadFont = null;
+                    try (InputStream inputStream = new ClassPathResource("fonts/simhei.ttf").getInputStream()) {
+                        // 加载自定义字体
+                        Font customFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+                        // 设置字体样式
+                        loadFont = customFont.deriveFont(Font.PLAIN, 40);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    // 如果自定义字体加载失败，使用系统默认字体
+                    if (loadFont == null) {
+                        loadFont = new Font("SimHei", Font.PLAIN, 40);
+                        // 如果系统没有黑体，再尝试其他中文字体
+                        if (!loadFont.getFamily().equals("SimHei")) {
+                            loadFont = new Font("Microsoft YaHei", Font.PLAIN, 40);
+                        }
+                        // 如果都不行，使用 SansSerif
+                        if (loadFont.getFamily().equals("Dialog")) {
+                            loadFont = new Font("SansSerif", Font.PLAIN, 40);
+                        }
+                    }
+                    font = loadFont;
+                }
             }
         }
 
-        FontMetrics metrics = templateG2D.getFontMetrics(font);
+        // 最终保护：如果字体仍为null，使用系统默认字体
+        Font useFont = font != null ? font : new Font("SansSerif", Font.PLAIN, 40);
+        FontMetrics metrics = templateG2D.getFontMetrics(useFont);
         // Determine the X coordinate for the text
         int x = (templateWidth - metrics.stringWidth(drawName)) / 2;
         // Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
         int y = ((templateHeight - metrics.getHeight()) / 2) + metrics.getAscent();
         // Set the font
-        templateG2D.setFont(font);
+        templateG2D.setFont(useFont);
         // Draw the String
         templateG2D.drawString(drawName, x, y);
         return this;
