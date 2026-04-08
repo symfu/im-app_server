@@ -119,6 +119,10 @@ public class ServiceImpl implements Service {
     @Value("${ldap.search_base}")
     private String SEARCH_BASE;
 
+
+    @Value("${wfc.user_register_forbidden:false}")
+    private boolean userRegisterForbidden;
+
     @Autowired
     private ShortUUIDGenerator userNameGenerator;
 
@@ -274,6 +278,20 @@ public class ServiceImpl implements Service {
                 return RestResult.error(ERROR_USER_FORBIDDEN);
             }
 
+            // 如果禁止注册，检查用户是否存在
+            if (userRegisterForbidden) {
+                try {
+                    IMResult<InputOutputUserInfo> userResult = UserAdmin.getUserByMobile(mobile);
+                    if (userResult.getErrorCode() == ErrorCode.ERROR_CODE_NOT_EXIST) {
+                        LOG.info("User not exist and register is forbidden, cannot send login code");
+                        return RestResult.error(ERROR_NOT_EXIST);
+                    }
+                } catch (Exception e) {
+                    LOG.error("Check user exist error", e);
+                    return RestResult.error(ERROR_SERVER_ERROR);
+                }
+            }
+
             String code = Utils.getRandomCode(6);
             RestResult.RestCode restCode = authDataSource.insertRecord(mobile, code);
 
@@ -376,6 +394,20 @@ public class ServiceImpl implements Service {
         int userStatus = getUserStatus(mobile);
         if(userStatus == 2) {
             return RestResult.error(ERROR_USER_FORBIDDEN);
+        }
+
+        // 如果禁止注册，检查用户是否存在
+        if (userRegisterForbidden) {
+            try {
+                IMResult<InputOutputUserInfo> userResult = UserAdmin.getUserByMobile(mobile);
+                if (userResult.getErrorCode() == ErrorCode.ERROR_CODE_NOT_EXIST) {
+                    LOG.info("User not exist and register is forbidden, cannot send reset code");
+                    return RestResult.error(ERROR_NOT_EXIST);
+                }
+            } catch (Exception e) {
+                LOG.error("Check user exist error", e);
+                return RestResult.error(ERROR_SERVER_ERROR);
+            }
         }
 
         try {
@@ -718,6 +750,10 @@ public class ServiceImpl implements Service {
             InputOutputUserInfo user;
             boolean isNewUser = false;
             if (userResult.getErrorCode() == ErrorCode.ERROR_CODE_NOT_EXIST) {
+                if (userRegisterForbidden) {
+                    LOG.info("User not exist and register is forbidden");
+                    return RestResult.error(RestResult.RestCode.ERROR_NOT_EXIST);
+                }
                 LOG.info("User not exist, try to create");
 
                 //获取用户名。如果用的是shortUUID生成器，是有极小概率会重复的，所以需要去检查是否已经存在相同的userName。
