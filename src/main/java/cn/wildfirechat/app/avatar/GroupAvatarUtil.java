@@ -28,18 +28,19 @@ public class GroupAvatarUtil {
         List<BufferedImage> bufferedImages = new ArrayList<BufferedImage>();
         // 压缩图片所有的图片生成尺寸同意的 为 50x50
 
-        int imageSize = 33;
-        if (paths.size() <= 4) {
-            imageSize = 50;
+        int width = 112; // 这是画板的宽高
+        int height = 112; // 这是画板的高度
+
+        int imageSize = 36;
+        if (paths.size() == 1) {
+            imageSize = 112;
+        } else if (paths.size() <= 4) {
+            imageSize = 54;
         }
 
         for (int i = 0; i < paths.size(); i++) {
             bufferedImages.add(resize2(paths.get(i), imageSize, imageSize, true));
         }
-
-        int width = 112; // 这是画板的宽高
-
-        int height = 112; // 这是画板的高度
 
         // BufferedImage.TYPE_INT_RGB可以自己定义可查看API
 
@@ -64,71 +65,71 @@ public class GroupAvatarUtil {
         for (int i = 1; i <= bufferedImages.size(); i++) {
             if (bufferedImages.size() == 9) {
                 if (i <= 3) {
-                    g2d.drawImage(bufferedImages.get(i - 1), 33 * i + 3 * i - 33, 4, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 38 * (i - 1), 0, null);
                 } else if (i <= 6) {
-                    g2d.drawImage(bufferedImages.get(i - 1), 33 * j + 3 * j - 33, 41, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 38 * (j - 1), 38, null);
                     j++;
                 } else {
-                    g2d.drawImage(bufferedImages.get(i - 1), 33 * k + 3 * k - 33, 77, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 38 * (k - 1), 76, null);
                     k++;
                 }
             } else if (bufferedImages.size() == 8) {
                 if (i <= 2) {
-                    g2d.drawImage(bufferedImages.get(i - 1), 33 * i + 4 * i - 18, 4, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 19 + 38 * (i - 1), 0, null);
                 } else if (i <= 5) {
-                    g2d.drawImage(bufferedImages.get(i - 1), 33 * j + 3 * j - 33, 41, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 38 * (j - 1), 38, null);
                     j++;
                 } else {
-                    g2d.drawImage(bufferedImages.get(i - 1), 33 * k + 3 * k - 33, 77, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 38 * (k - 1), 76, null);
                     k++;
                 }
             } else if (bufferedImages.size() == 7) {
                 if (i <= 1) {
-                    g2d.drawImage(bufferedImages.get(i - 1), 39, 4, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 38, 0, null);
                 } else if (i <= 4) {
-                    g2d.drawImage(bufferedImages.get(i - 1), 33 * j + 3 * j - 33, 41, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 38 * (j - 1), 38, null);
                     j++;
                 } else {
-                    g2d.drawImage(bufferedImages.get(i - 1), 33 * k + 3 * k - 33, 77, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 38 * (k - 1), 76, null);
                     k++;
                 }
             } else if (bufferedImages.size() == 6) {
                 if (i <= 3) {
-                    g2d.drawImage(bufferedImages.get(i - 1), 33 * i + 3 * i - 33, 15, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 38 * (i - 1), 19, null);
                 } else {
-                    g2d.drawImage(bufferedImages.get(i - 1), 33 * j + 3 * j - 33, 58, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 38 * (j - 1), 57, null);
                     j++;
                 }
             } else if (bufferedImages.size() == 5) {
                 if (i <= 2) {
-                    g2d.drawImage(bufferedImages.get(i - 1), 33 * i + 4 * i - 18, 15, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 19 + 38 * (i - 1), 19, null);
                 } else {
-                    g2d.drawImage(bufferedImages.get(i - 1), 33 * j + 3 * j - 33, 58, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 38 * (j - 1), 57, null);
                     j++;
                 }
             } else if (bufferedImages.size() == 4) {
                 if (i <= 2) {
-                    g2d.drawImage(bufferedImages.get(i - 1), 50 * i + 4 * i - 50, 4, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 58 * (i - 1), 0, null);
                 } else {
-                    g2d.drawImage(bufferedImages.get(i - 1), 50 * j + 4 * j - 50, 58, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 58 * (j - 1), 58, null);
                     j++;
                 }
             } else if (bufferedImages.size() == 3) {
                 if (i <= 1) {
-                    g2d.drawImage(bufferedImages.get(i - 1), 31, 4, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 29, 0, null);
                 } else {
-                    g2d.drawImage(bufferedImages.get(i - 1), 50 * j + 4 * j - 50, 58, null);
+                    g2d.drawImage(bufferedImages.get(i - 1), 58 * (j - 1), 58, null);
                     j++;
                 }
 
             } else if (bufferedImages.size() == 2) {
 
-                g2d.drawImage(bufferedImages.get(i - 1), 50 * i + 4 * i - 50,
-                    31, null);
+                g2d.drawImage(bufferedImages.get(i - 1), 58 * (i - 1),
+                    29, null);
 
             } else if (bufferedImages.size() == 1) {
 
-                g2d.drawImage(bufferedImages.get(i - 1), 31, 31, null);
+                g2d.drawImage(bufferedImages.get(i - 1), 0, 0, null);
 
             }
 
